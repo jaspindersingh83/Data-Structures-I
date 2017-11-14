@@ -16,19 +16,61 @@ class HashTable {
   // If no bucket has been created for that index, instantiate a new bucket and add the key, value pair to that new bucket
   // If the key already exists in the bucket, the newer value should overwrite the older value associated with that key
   insert(key, value) {
-
+    const index = getIndexBelowMax(key, this.limit);
+    if (this.storage.get(index) === undefined) {
+      this.storage.set(index, []);
+      this.storage.get(index).push([key, value]);
+    } else {
+      const elements = this.storage.get(index);
+      for (let i = 0; i < elements.length; i++) {
+        if (elements[i][0] === key) {
+          elements[i][1] = value;
+        } else {
+          this.storage.get(index).push([key, value]);
+        }
+      }
+    }
+    // const capacity = this.storage.length;
+    // if (capacity >= 0.75 * this.limit) {
+    //   this.limit = this.limit * 2;
+    //   this.storage = new LimitedArray(this.limit);
+    // }
   }
   // Removes the key, value pair from the hash table
   // Fetch the bucket associated with the given key using the getIndexBelowMax function
   // Remove the key, value pair from the bucket
   remove(key) {
-
+    const index = getIndexBelowMax(key, this.limit);
+    const bucket = this.storage;
+    const elements = bucket.get(index);
+    if (elements !== undefined) {
+      for (let i = 0; i < elements.length; i++) {
+        if (elements[i][0] === key) {
+          elements.splice(i, 1);
+        }
+      }
+    }
+    const capacity = this.storage.length;
+    if (capacity < 0.75 * ((this.limit) / 2)) {
+      this.limit = this.limit / 2;
+      this.storage = new LimitedArray(this.limit);
+    }
   }
   // Fetches the value associated with the given key from the hash table
   // Fetch the bucket associated with the given key using the getIndexBelowMax function
   // Find the key, value pair inside the bucket and return the value
   retrieve(key) {
-
+    const index = getIndexBelowMax(key, this.limit);
+    const bucket = this.storage;
+    const elements = bucket.get(index);
+    if (elements !== undefined) {
+      for (let i = 0; i < elements.length; i++) {
+        if (elements[i][0] === key) {
+          const retrieved = elements[i][1];
+          return retrieved;
+        }
+      }
+    }
   }
 }
 
