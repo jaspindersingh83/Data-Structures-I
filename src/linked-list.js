@@ -42,9 +42,7 @@ class LinkedList {
   // Checks the linked list for the given value
   // Returns true if the the value is found in the list, false otherwise
   contains(value) {
-    if (!this.head) {
-      return false;
-    }
+    if (!this.head) return false;
     if (this.head === this.tail) {
       return value === this.head.value;
     } const comparison = this.removeHead();

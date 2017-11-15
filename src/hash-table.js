@@ -15,6 +15,18 @@ class HashTable {
   // Fetch the bucket associated with the given key using the getIndexBelowMax function
   // If no bucket has been created for that index, instantiate a new bucket and add the key, value pair to that new bucket
   // If the key already exists in the bucket, the newer value should overwrite the older value associated with that key
+  retrievekv() {
+    const pairsdata = this.storage.storage;
+    const pairs = [];
+    pairsdata.forEach((ele) => {
+      if (Array.isArray(ele)) {
+        for (let i = 0; i < ele.length; i++) {
+          pairs.push(ele[i]);
+        }
+      }
+    });
+    return pairs;
+  }
   insert(key, value) {
     const index = getIndexBelowMax(key, this.limit);
     if (this.storage.get(index) === undefined) {
@@ -30,11 +42,20 @@ class HashTable {
         }
       }
     }
-    // const capacity = this.storage.length;
-    // if (capacity >= 0.75 * this.limit) {
-    //   this.limit = this.limit * 2;
-    //   this.storage = new LimitedArray(this.limit);
-    // }
+    let counter = 0;
+    for (let i = 0; i < this.storage.length; i++) {
+      if (this.storage.get(i) !== undefined) {
+        counter++;
+      }
+    }
+    if (counter >= 0.75 * this.limit) {
+      const prev = this.retrievekv();
+      this.limit = this.limit * 2;
+      this.storage = new LimitedArray(this.limit);
+      prev.forEach((ele) => {
+        this.insert(ele[0], ele[1]);
+      });
+    }
   }
   // Removes the key, value pair from the hash table
   // Fetch the bucket associated with the given key using the getIndexBelowMax function
